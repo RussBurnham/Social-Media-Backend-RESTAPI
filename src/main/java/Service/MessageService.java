@@ -22,8 +22,8 @@ public class MessageService {
       return messageDao.createMessage(message);
     }
 
-    public void deleteMessage(int message_id) {
-      messageDao.deleteMessage(message_id);
+    public boolean deleteMessage(int message_id) {
+      return messageDao.deleteMessage(message_id);
     }
 
 }

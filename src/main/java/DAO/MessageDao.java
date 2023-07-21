@@ -54,18 +54,19 @@ public class MessageDao {
         return false;
     }
     
-    public void deleteMessage(int message_id) {
+    public boolean deleteMessage(int message_id) {
         
         try {   
-            //if (messageExists(message_id, connection))
             Connection connection = ConnectionUtil.getConnection();
             PreparedStatement ps = connection.prepareStatement("DELETE FROM message WHERE message_id = ?");
             ps.setInt(1, message_id);
             ps.executeUpdate();
+            return true;
         
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
+        return false;
     }
 
     // private boolean messageExists(int message_id, Connection connection) throws SQLException {
