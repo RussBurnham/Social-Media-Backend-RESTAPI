@@ -20,10 +20,9 @@ public class AccountService {
     }
 
     public Account registerAccount(String username, String password) {
-        if (username.isBlank() || password.length() < 4) {
+        if (username.isBlank() || password.length() < 4 || accountDao.usernameExists(username)) {
             return null;
         }
         return accountDao.registerAccount(username, password);
     }
-
 }

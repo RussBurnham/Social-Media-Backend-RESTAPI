@@ -10,9 +10,9 @@ import java.sql.SQLException;
 public class AccountDao {
 
     public Account loginAccount(Account account) {
-        Connection connection = ConnectionUtil.getConnection();
-        String sql = "SELECT * FROM account WHERE username = ? AND password = ?";
         try {
+            Connection connection = ConnectionUtil.getConnection();
+            String sql = "SELECT * FROM account WHERE username = ? AND password = ?";
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, account.getUsername());
             ps.setString(2, account.getPassword());
@@ -30,7 +30,8 @@ public class AccountDao {
 
     public Account registerAccount(String username, String password) {
         Account newAccount = null;
-        try (Connection connection = ConnectionUtil.getConnection()) {
+        try {
+            Connection connection = ConnectionUtil.getConnection();
             String sql = "INSERT INTO account (username, password) VALUES (?, ?);";
             PreparedStatement ps = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
             ps.setString(1, username);
@@ -48,20 +49,19 @@ public class AccountDao {
     }
 
     public boolean usernameExists(String username) {
-        try (Connection connection = ConnectionUtil.getConnection();
-                PreparedStatement ps = connection.prepareStatement(
-                        "SELECT COUNT(*) FROM account WHERE username = ?;")) {
+        try {
+            Connection connection = ConnectionUtil.getConnection();
+            String sql = "SELECT COUNT(*) FROM account WHERE username = ?;";
+            PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, username);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    int count = rs.getInt(1);
-                    return count > 0;
-                }
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                return count > 0;
             }
         } catch (SQLException ex) {
             return false;
         }
         return false;
     }
-
 }

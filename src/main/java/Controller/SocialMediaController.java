@@ -54,13 +54,14 @@ public class SocialMediaController {
                 boolean deleted = messageService.deleteMessage(messageId);
                 if (deleted) {
                     ctx.result(mapper.writeValueAsString(messageToDelete));
+                } else {
+                    ctx.status(200).result("");
                 }
-            } else {
-                ctx.status(200).result("");
-            }
+            }  
         } catch (NumberFormatException ex) {
             ctx.status(400);
         } catch (Exception ex) {
+            ex.printStackTrace();
             ctx.status(500);
         }
     }
@@ -91,18 +92,21 @@ public class SocialMediaController {
 
     private void getMessageByIdHandler(Context ctx) {
         ObjectMapper mapper = new ObjectMapper();
-        String messageIdString = ctx.pathParam("message_id");
-        int messageId = Integer.parseInt(messageIdString);
-        Message message = messageService.getMessageById(messageId);
-        if (message == null) {
-            ctx.status(200);
-        } else {
-            try {
+        try {
+            String messageIdString = ctx.pathParam("message_id");
+            int messageId = Integer.parseInt(messageIdString);
+            Message message = messageService.getMessageById(messageId);
+            if (message == null) {
+                ctx.status(200);
+            } else {
                 String jsonResponse = mapper.writeValueAsString(message);
                 ctx.json(jsonResponse);
-            } catch (JsonProcessingException ex) {
-                ex.printStackTrace();
             }
+        } catch (NumberFormatException ex) {
+            ctx.status(400);
+        } catch (JsonProcessingException ex) {
+            ex.printStackTrace();
+            ctx.status(500);
         }
     }
 
@@ -112,7 +116,7 @@ public class SocialMediaController {
             String messageIdString = ctx.pathParam("message_id");
             int messageId = Integer.parseInt(messageIdString);
             Message getMessage = messageService.getMessageById(messageId);
-            if (getMessage == null){
+            if (getMessage == null) {
                 ctx.status(400);
             } else {
                 Message updatedMessage = mapper.readValue(ctx.body(), Message.class);
@@ -125,6 +129,8 @@ public class SocialMediaController {
                     ctx.json(jsonResponse);
                 }
             }
+        } catch (NumberFormatException ex) {
+            ctx.status(400);
         } catch (JsonProcessingException ex) {
             ex.printStackTrace();
             ctx.status(500);
@@ -140,10 +146,11 @@ public class SocialMediaController {
                 String jsonResponse = mapper.writeValueAsString(loggedInAccount);
                 ctx.json(jsonResponse);
             } else {
-                ctx.status(401); 
+                ctx.status(401);
             }
         } catch (JsonProcessingException ex) {
             ex.printStackTrace();
+            ctx.status(500);
         }
     }
 
@@ -160,8 +167,10 @@ public class SocialMediaController {
             }
         } catch (JsonProcessingException ex) {
             ex.printStackTrace();
+            ctx.status(500);
         }
     }
 }
+
 
 
